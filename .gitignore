@@ -1,0 +1,6 @@
+﻿.venv/
+__pycache__/
+*.py[cod]
+.dspy_cache/
+.env
+.ipynb_checkpoints/
