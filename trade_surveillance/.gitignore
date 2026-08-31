@@ -1,0 +1,8 @@
+trade_surveillance_output/
+*.parquet
+*.csv
+*.csv.gz
+*.xlsx
+.ipynb_checkpoints/
+__pycache__/
+*.py[cod]
