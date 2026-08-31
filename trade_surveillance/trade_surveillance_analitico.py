@@ -366,8 +366,15 @@ def validar_e_preparar(
 
     def add_motivo(mask: pd.Series, texto: str) -> None:
         nonlocal motivos_quarentena
-        sep = np.where(motivos_quarentena.eq(""), "", "|")
-        motivos_quarentena = motivos_quarentena + np.where(mask, sep + texto, "")
+        # Evita soma de arrays NumPy de strings com larguras diferentes
+        # (UFuncTypeError em ambientes com NumPy 2.x). A concatenação fica
+        # inteiramente no dtype StringDtype do pandas.
+        selecionados = mask.fillna(False).astype(bool)
+        atuais = motivos_quarentena.loc[selecionados].fillna("")
+        novo_motivo = pd.Series(texto, index=atuais.index, dtype="string")
+        motivos_quarentena.loc[selecionados] = (
+            atuais.str.cat(novo_motivo, sep="|").str.lstrip("|")
+        )
 
     add_motivo(dados[cfg.col_data].isna(), "DATA_INVALIDA")
     add_motivo(dados[cfg.col_ticker].isna(), "TICKER_AUSENTE")
